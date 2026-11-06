@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Admin{% endblock %} · Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="admin" data-needs-auth="0">
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('admin.orders') }}">Admin</a>
+    <nav>
+      <a href="{{ url_for('admin.orders') }}">Orders</a>
+      <a href="{{ url_for('admin.products') }}">Menu</a>
+      <a href="{{ url_for('admin.analytics') }}">Analytics</a>
+      <a href="{{ url_for('admin.settings') }}">Settings</a>
+      <a href="{{ url_for('admin.model') }}">Model</a>
+      <a href="{{ url_for('shop.menu') }}">Shop ↗</a>
+      <button id="sign-out" class="link-btn">Sign out</button>
+    </nav>
+  </header>
+  <main class="container wide">
+    {% with messages = get_flashed_messages() %}
+      {% for m in messages %}<p class="flash">{{ m }}</p>{% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <script id="firebase-config" type="application/json">{{ firebase_config|tojson }}</script>
+  <script type="module" src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

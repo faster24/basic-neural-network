@@ -1,0 +1,62 @@
+{% extends 'admin/base.html' %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Checkout sessions</h1>
+  <a class="btn" href="{{ url_for('admin.export_csv', **{'from': start, 'to': end, 'complete': '1' if complete else None}) }}">Export CSV</a>
+</div>
+
+<form method="get" class="row filters">
+  <label>From <input type="date" name="from" value="{{ start }}"></label>
+  <label>To <input type="date" name="to" value="{{ end }}"></label>
+  <label class="check"><input type="checkbox" name="complete" value="1" {% if complete %}checked{% endif %}> Only sessions with an address</label>
+  <button class="btn">Apply</button>
+</form>
+
+<div class="stats">
+  <div class="stat"><span class="stat-label">Sessions</span><span class="stat-value">{{ summary.total }}</span></div>
+  <div class="stat"><span class="stat-label">Abandoned</span><span class="stat-value">{{ summary.abandoned }}
+    {% if summary.total %}<small>({{ '%.0f'|format(summary.abandoned / summary.total * 100) }}%)</small>{% endif %}</span></div>
+  <div class="stat"><span class="stat-label">Avg score</span><span class="stat-value">{{ '%.3f'|format(summary.avg_score) }}</span></div>
+</div>
+
+{% if chart.labels %}
+<div class="charts">
+  <figure class="chart"><figcaption>Abandonment rate per day (%)</figcaption><canvas id="rate-chart" role="img" aria-label="Abandonment rate per day"></canvas></figure>
+  <figure class="chart"><figcaption>Average score per day</figcaption><canvas id="score-chart" role="img" aria-label="Average score per day"></canvas></figure>
+</div>
+{% endif %}
+
+<div class="table-wrap">
+<table class="sessions">
+  <thead>
+    <tr><th>Started</th><th>Outcome</th>
+      {% for n in inputs %}<th class="num" title="{{ n }}">x{{ loop.index }}</th>{% endfor %}
+      <th class="num">Score</th><th>Model</th></tr>
+  </thead>
+  <tbody>
+  {% for r in rows %}
+    <tr {% if r.incomplete %}class="muted" title="Abandoned before choosing an address"{% endif %}>
+      <td>{{ r.started_at|local('%d %b %H:%M') }}</td>
+      <td><span class="status-pill s-{{ r.status }}">{{ r.status }}</span></td>
+      {% for n in inputs %}
+        <td class="num" title="raw: {{ r.raw[n] if r.raw else '' }}">{{ '%.2f'|format(r.inputs[n]) if r.inputs else '–' }}</td>
+      {% endfor %}
+      <td class="num"><strong>{{ '%.3f'|format(r.score) if r.score is not none else '–' }}</strong></td>
+      <td>{{ r.model_version }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="10" class="muted">No closed sessions in this range.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="muted small">x1 time · x2 cart value · x3 delivery fee · x4 distance · x5 payment dwell · x6 back/exit. Hover a cell for the raw value. Showing up to 300 rows; the CSV has all.</p>
+{% endblock %}
+{% block scripts %}
+{% if chart.labels %}
+<script id="chart-data" type="application/json">{{ chart|tojson }}</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'admin/base.html' %}
+{% block title %}Model{% endblock %}
+{% block content %}
+<h1>Model weights <span class="muted small">active: {{ active }}</span></h1>
+<p class="muted small">Saving creates a new version and makes it active. Closed sessions keep the version they were scored with.
+  Versions: {{ versions|join(', ') or 'v1 (defaults)' }}</p>
+<form method="post" class="form">
+  <fieldset>
+    <legend>W1: inputs → hidden layer 1</legend>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th></th>{% for n in inputs %}<th>x{{ loop.index }} {{ n.replace('_', ' ') }}</th>{% endfor %}</tr></thead>
+      <tbody>
+      {% for label in ['H1 brand love', 'H2 program love'] %}
+        {% set r = loop.index0 %}
+        <tr><th>{{ label }}</th>
+        {% for c in range(6) %}
+          <td><input class="num-input" name="w_{{ r }}_{{ c }}" type="number" step="any" value="{{ m.W1[r][c] }}" required aria-label="{{ label }} weight for {{ inputs[c] }}"></td>
+        {% endfor %}</tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Hidden layer 2 and output</legend>
+    <div class="row">
+      <label>omega (H4 disappointment mix) <input name="omega" type="number" step="any" value="{{ m.omega }}" required></label>
+      <label>wH1 (H5 from H1) <input name="wH1" type="number" step="any" value="{{ m.wH1 }}" required></label>
+    </div>
+    <div class="row">
+      <label>wH2 (H5 from H2) <input name="wH2" type="number" step="any" value="{{ m.wH2 }}" required></label>
+      <label>eta (output speed) <input name="eta" type="number" step="any" value="{{ m.eta }}" required></label>
+    </div>
+  </fieldset>
+  <button class="btn primary">Save as new version</button>
+</form>
+{% endblock %}

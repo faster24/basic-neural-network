@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Privacy notice{% endblock %}
+{% block content %}
+<article class="prose">
+<h1>Privacy notice</h1>
+<p>{{ store.name }} collects the data below to run your order and to understand why people leave checkout without ordering.</p>
+<h2>What we record during checkout</h2>
+<ul>
+  <li>When your checkout started, and your cart contents and value.</li>
+  <li>Your delivery distance and fee.</li>
+  <li>How long you spend on the payment step.</li>
+  <li>Back navigations, removed items and switching away from the page.</li>
+</ul>
+<h2>Location</h2>
+<p>Your exact delivery pin is stored only on orders you place, so we can deliver. If you leave without ordering, we keep only the distance in kilometres.</p>
+<h2>Payment</h2>
+<p>Card and e-wallet fields on this site are a demo and are never sent to our servers. Cash on delivery is the only real payment.</p>
+<h2>Accounts</h2>
+<p>You get an anonymous account when you first visit. Signing in with Google links your orders to your Google email.</p>
+<h2>Your rights</h2>
+<p>Under Thailand's Personal Data Protection Act you can ask to see or delete your data. Contact the store to do so.</p>
+</article>
+{% endblock %}

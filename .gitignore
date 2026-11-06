@@ -1,3 +1,6 @@
 .venv/
 __pycache__/
 .gitignore
+serviceAccount.json
+firebase-cred.json
+firebase-web.json

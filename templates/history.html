@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Your orders{% endblock %}
+{% block content %}
+<h1>Your orders</h1>
+<p class="muted small" id="history-hint">Sign in with Google to keep your order history on other devices.</p>
+{% if not orders %}
+  <p class="muted">No orders yet.</p>
+{% else %}
+  <ul class="lines">
+    {% for o in orders %}
+    <li class="line">
+      <a class="line-name" href="{{ url_for('shop.order', order_id=o.id) }}">
+        #{{ o.id[:6] }} · {{ o.created_at|local('%d %b %Y') }}
+      </a>
+      <span class="status-pill s-{{ o.status }}">{{ o.status.replace('_', ' ') }}</span>
+      <span class="price">฿{{ '%.0f'|format(o.total) }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endblock %}

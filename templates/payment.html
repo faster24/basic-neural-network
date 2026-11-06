@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Payment{% endblock %}
+{% block content %}
+<h1>Payment</h1>
+<ul class="lines compact">
+  {% for pid, i in items.items() %}
+  <li class="line"><span class="line-name">{{ i.qty }} × {{ i.name }}</span><span class="price">฿{{ '%.0f'|format(i.price * i.qty) }}</span></li>
+  {% endfor %}
+</ul>
+<p class="total-row"><span>Subtotal</span><span>฿{{ '%.0f'|format(subtotal) }}</span></p>
+<p class="total-row"><span>Delivery ({{ '%.1f'|format(km) }} km)</span><span>฿{{ '%.0f'|format(fee) }}</span></p>
+<p class="total-row grand"><span>Total</span><strong>฿{{ '%.0f'|format(total) }}</strong></p>
+
+<form id="pay-form" novalidate>
+  <fieldset class="methods">
+    <legend>Pay with</legend>
+    {% for key, label in methods.items() %}
+    <label class="method"><input type="radio" name="payment_method" value="{{ key }}" {% if loop.first %}checked{% endif %}> {{ label }}</label>
+    {% endfor %}
+  </fieldset>
+
+  <!-- Simulated: these fields are never sent to the server. -->
+  <fieldset id="card-fields" class="sim-fields" hidden>
+    <legend>Card details <span class="muted small">(demo — not charged)</span></legend>
+    <label>Card number <input inputmode="numeric" autocomplete="off" id="card-number" placeholder="4242 4242 4242 4242"></label>
+    <div class="row">
+      <label>Expiry <input autocomplete="off" id="card-exp" placeholder="MM/YY"></label>
+      <label>CVC <input inputmode="numeric" autocomplete="off" id="card-cvc" placeholder="123"></label>
+    </div>
+  </fieldset>
+  <fieldset id="wallet-fields" class="sim-fields" hidden>
+    <legend>E-wallet <span class="muted small">(demo — not charged)</span></legend>
+    <label>Phone number <input inputmode="tel" autocomplete="off" id="wallet-phone" placeholder="08x xxx xxxx"></label>
+  </fieldset>
+
+  <p id="pay-error" class="error" role="alert" hidden></p>
+  <div class="actions">
+    <a class="btn ghost step-back" href="{{ url_for('shop.address') }}">← Address</a>
+    <button class="btn primary" id="place-order">Place order · ฿{{ '%.0f'|format(total) }}</button>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/payment.js') }}"></script>{% endblock %}

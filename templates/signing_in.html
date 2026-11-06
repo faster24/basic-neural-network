@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Signing in…{% endblock %}
+{% block content %}
+<div class="center-box">
+  <div class="spinner" aria-hidden="true"></div>
+  <p>Signing you in…</p>
+  <p class="muted small" id="auth-stuck" hidden>Still here? Check your connection and <a href="">reload</a>.</p>
+</div>
+<script>setTimeout(() => document.getElementById('auth-stuck').hidden = false, 6000);</script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<h1>Your cart</h1>
+{% if not items %}
+  <p class="muted">Your cart is empty.</p>
+  <a class="btn" href="{{ url_for('shop.menu') }}">Browse menu</a>
+{% else %}
+  <ul class="lines">
+    {% for pid, i in items.items() %}
+    <li class="line">
+      <span class="line-name">{{ i.name }}</span>
+      <span class="qty">
+        <button class="qty-btn" data-product-id="{{ pid }}" data-delta="-1" aria-label="Remove one {{ i.name }}">−</button>
+        <span>{{ i.qty }}</span>
+        <button class="qty-btn" data-product-id="{{ pid }}" data-delta="1" aria-label="Add one {{ i.name }}">+</button>
+      </span>
+      <span class="price">฿{{ '%.0f'|format(i.price * i.qty) }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="total-row"><span>Subtotal</span><strong>฿{{ '%.0f'|format(subtotal) }}</strong></p>
+  <div class="actions">
+    <a class="btn ghost step-back" href="{{ url_for('shop.menu') }}">← Keep shopping</a>
+    <a class="btn primary" href="{{ url_for('shop.address') }}">Delivery address →</a>
+  </div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/cart.js') }}"></script>{% endblock %}

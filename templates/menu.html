@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="store-info">
+  <h1>{{ store.name }}</h1>
+  <p class="muted">Open {{ store.hours }} · Delivery within {{ store.fee_tiers[-1][0]|round|int }} km</p>
+</section>
+
+<form class="search" method="get" role="search">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search menu" aria-label="Search menu">
+  {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+  <button class="btn">Search</button>
+</form>
+
+<nav class="chips" aria-label="Categories">
+  <a href="{{ url_for('shop.menu', q=q or None) }}" class="chip {% if not category %}active{% endif %}">All</a>
+  {% for c in categories %}
+    <a href="{{ url_for('shop.menu', category=c, q=q or None) }}" class="chip {% if c == category %}active{% endif %}">{{ c }}</a>
+  {% endfor %}
+</nav>
+
+{% if not products %}
+  <p class="muted">No items found.</p>
+{% endif %}
+<ul class="products">
+  {% for p in products %}
+  <li class="product">
+    {% if p.image_url %}<img src="{{ p.image_url }}" alt="" loading="lazy">{% endif %}
+    <div class="product-body">
+      <h2>{{ p.name }}</h2>
+      {% if p.description %}<p class="muted small">{{ p.description }}</p>{% endif %}
+      <div class="product-foot">
+        <span class="price">฿{{ '%.0f'|format(p.price) }}</span>
+        <button class="btn add-to-cart" data-product-id="{{ p.id }}">Add</button>
+      </div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/cart.js') }}"></script>{% endblock %}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#c2410c">
+  <title>{% block title %}{{ store.name if store else 'Shop' }}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body data-step="{{ step or '' }}" data-needs-auth="{{ '1' if needs_auth else '0' }}">
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('shop.menu') }}">{{ store.name if store else 'Shop' }}</a>
+    <nav>
+      <a href="{{ url_for('shop.history') }}">Orders</a>
+      <a href="{{ url_for('shop.cart') }}" class="cart-link" aria-label="Cart">
+        Cart <span id="cart-count" class="badge" {% if not cart_count %}hidden{% endif %}>{{ cart_count or 0 }}</span>
+      </a>
+      <button id="google-signin" class="link-btn" hidden>Sign in</button>
+      <span id="user-email" class="muted small" hidden></span>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages() %}
+      {% for m in messages %}<p class="flash">{{ m }}</p>{% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <div id="privacy-banner" class="privacy-banner" hidden>
+    <p>We record how you use checkout (time on each step, back/exit actions, delivery distance) to improve our service.
+      <a href="{{ url_for('shop.privacy') }}">Privacy notice</a></p>
+    <button id="privacy-ok" class="btn small">OK</button>
+  </div>
+
+  <script id="firebase-config" type="application/json">{{ firebase_config|tojson }}</script>
+  <script type="module" src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='js/track.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

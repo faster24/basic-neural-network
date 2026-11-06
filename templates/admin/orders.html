@@ -1,0 +1,37 @@
+{% extends 'admin/base.html' %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Orders</h1>
+  <nav class="chips">
+    <a class="chip {% if show == 'active' %}active{% endif %}" href="{{ url_for('admin.orders', show='active') }}">Active</a>
+    <a class="chip {% if show == 'all' %}active{% endif %}" href="{{ url_for('admin.orders', show='all') }}">All (last 200)</a>
+  </nav>
+</div>
+<p class="muted small">Refreshes every 30 seconds.</p>
+{% if not orders %}<p class="muted">No orders.</p>{% endif %}
+<div class="cards">
+  {% for o in orders %}
+  <article class="card">
+    <header class="card-head">
+      <strong>#{{ o.id[:6] }}</strong>
+      <span class="status-pill s-{{ o.status }}">{{ o.status.replace('_', ' ') }}</span>
+    </header>
+    <p class="muted small">{{ o.created_at|local }} · {{ methods[o.payment_method] }} · {{ '%.1f'|format(o.distance_km) }} km</p>
+    <ul class="plain">
+      {% for i in o['items'] %}<li>{{ i.qty }} × {{ i.name }}</li>{% endfor %}
+    </ul>
+    <p><strong>฿{{ '%.0f'|format(o.total) }}</strong>
+      · <a href="https://www.openstreetmap.org/?mlat={{ o.lat }}&mlon={{ o.lng }}#map=17/{{ o.lat }}/{{ o.lng }}" target="_blank" rel="noopener">Map</a></p>
+    <form method="post" action="{{ url_for('admin.set_status', order_id=o.id, show=show) }}" class="row">
+      <label class="sr-only" for="st-{{ o.id }}">Status</label>
+      <select name="status" id="st-{{ o.id }}">
+        {% for s in statuses %}<option value="{{ s }}" {% if s == o.status %}selected{% endif %}>{{ s.replace('_', ' ') }}</option>{% endfor %}
+      </select>
+      <button class="btn small">Update</button>
+    </form>
+  </article>
+  {% endfor %}
+</div>
+<script>setTimeout(() => location.reload(), 30000);</script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Delivery address{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{% endblock %}
+{% block content %}
+<h1>Where should we deliver?</h1>
+<p class="muted small">Drag the pin or tap the map. We start from your current location if you allow it.</p>
+<div id="map" class="map"
+     data-store-lat="{{ store.lat }}" data-store-lng="{{ store.lng }}"
+     data-max-km="{{ store.fee_tiers[-1][0] }}"></div>
+<p id="quote" class="quote" role="status" aria-live="polite">Choose a location on the map.</p>
+<p class="total-row"><span>Subtotal</span><strong>฿{{ '%.0f'|format(subtotal) }}</strong></p>
+<div class="actions">
+  <a class="btn ghost step-back" href="{{ url_for('shop.cart') }}">← Cart</a>
+  <a id="to-payment" class="btn primary disabled" aria-disabled="true" href="{{ url_for('shop.payment') }}">Payment →</a>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script type="module" src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}

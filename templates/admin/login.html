@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin sign-in</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body data-needs-auth="0">
+  <main class="container center-box">
+    <h1>Admin</h1>
+    {% if user and not user.anonymous %}
+      <p class="error">{{ user.email }} is not an admin.</p>
+      <p class="muted small">Add it to the <code>ADMIN_EMAILS</code> environment variable and restart the server.</p>
+      <button id="sign-out" class="btn">Use another account</button>
+    {% else %}
+      <p>Sign in with an allowed Google account.</p>
+      <button id="google-signin" class="btn primary">Sign in with Google</button>
+    {% endif %}
+    <p><a href="{{ url_for('shop.menu') }}">Back to shop</a></p>
+  </main>
+  <script id="firebase-config" type="application/json">{{ firebase_config|tojson }}</script>
+  <script type="module" src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>

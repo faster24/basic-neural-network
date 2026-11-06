@@ -1,0 +1,26 @@
+{% extends 'admin/base.html' %}
+{% block title %}Menu{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Menu</h1>
+  <a class="btn primary" href="{{ url_for('admin.edit_product') }}">+ Add item</a>
+</div>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Name</th><th>Category</th><th class="num">Price</th><th>Visible</th><th></th></tr></thead>
+  <tbody>
+  {% for p in products %}
+    <tr {% if p.hidden %}class="muted"{% endif %}>
+      <td>{{ p.name }}</td>
+      <td>{{ p.category }}</td>
+      <td class="num">฿{{ '%.0f'|format(p.price) }}</td>
+      <td>{{ 'No' if p.hidden else 'Yes' }}</td>
+      <td><a href="{{ url_for('admin.edit_product', pid=p.id) }}">Edit</a></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5" class="muted">No items yet. Run <code>python seed.py</code> or add one.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

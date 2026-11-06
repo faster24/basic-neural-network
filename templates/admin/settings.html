@@ -1,0 +1,35 @@
+{% extends 'admin/base.html' %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<h1>Store settings</h1>
+<form method="post" class="form">
+  <fieldset>
+    <legend>Store</legend>
+    <label>Name <input name="name" value="{{ s.name }}" required></label>
+    <label>Opening hours (shown to customers) <input name="hours" value="{{ s.hours }}"></label>
+    <div class="row">
+      <label>Latitude <input name="lat" type="number" step="any" value="{{ s.lat }}" required></label>
+      <label>Longitude <input name="lng" type="number" step="any" value="{{ s.lng }}" required></label>
+    </div>
+    <label>Delivery fee tiers, <span class="muted small">km:THB, ascending — beyond the last tier we don't deliver</span>
+      <input name="fee_tiers" value="{{ s.fee_tiers|map('join', ':')|join(', ') }}" required></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Abandonment</legend>
+    <label>Mark a cart abandoned after this many idle minutes
+      <input name="abandon_minutes" type="number" min="1" step="1" value="{{ s.abandon_minutes }}" required></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Normalization caps <span class="muted small">(raw value that counts as 1.0)</span></legend>
+    {% set units = {'cart_value': 'THB', 'delivery_fee': 'THB', 'distance': 'km', 'payment_dwell_time': 'seconds', 'back_exit_behavior': 'events'} %}
+    {% for n in inputs[1:] %}
+    <label>x{{ loop.index + 1 }} {{ n.replace('_', ' ') }} ({{ units[n] }})
+      <input name="cap_{{ n }}" type="number" min="0" step="any" value="{{ s.caps[n] }}" required></label>
+    {% endfor %}
+    <p class="muted small">x1 time uses a fixed late-night curve (Asia/Bangkok): 0 from 06:00–20:00, rising to 1 at midnight, 1 until 04:00, back to 0 by 06:00.</p>
+  </fieldset>
+  <button class="btn primary">Save settings</button>
+</form>
+{% endblock %}

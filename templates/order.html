@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Order status{% endblock %}
+{% block content %}
+<h1>Order #{{ order.id[:6] }}</h1>
+<p class="muted small">Placed {{ order.created_at|local('%d %b %Y %H:%M') }} · {{ methods[order.payment_method] }}</p>
+
+<ol class="status-track" id="status-track" data-order-id="{{ order.id }}" data-status="{{ order.status }}">
+  {% for s in statuses %}
+  <li data-status="{{ s }}">{{ s.replace('_', ' ')|capitalize }}</li>
+  {% endfor %}
+</ol>
+<p id="cancelled-msg" class="error" {% if order.status != 'cancelled' %}hidden{% endif %}>This order was cancelled.</p>
+
+<ul class="lines compact">
+  {% for i in order['items'] %}
+  <li class="line"><span class="line-name">{{ i.qty }} × {{ i.name }}</span><span class="price">฿{{ '%.0f'|format(i.price * i.qty) }}</span></li>
+  {% endfor %}
+</ul>
+<p class="total-row"><span>Delivery ({{ '%.1f'|format(order.distance_km) }} km)</span><span>฿{{ '%.0f'|format(order.fee) }}</span></p>
+<p class="total-row grand"><span>Total</span><strong>฿{{ '%.0f'|format(order.total) }}</strong></p>
+<a class="btn" href="{{ url_for('shop.menu') }}">Back to menu</a>
+{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/order.js') }}"></script>{% endblock %}
